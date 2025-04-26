@@ -6,7 +6,10 @@ export async function generateRoute(req, res) {
     try {
         const { prompt } = req.body;
         const token = req.headers.authorization?.split(' ')[1];
-        const clientIP = req.ip || req.connection.remoteAddress;
+        const clientIP = req.headers['x-forwarded-for'] || 
+                        req.headers['x-real-ip'] || 
+                        req.ip || 
+                        req.connection.remoteAddress;
 
         // Vérification du token JWT
         if (!token) {
@@ -19,6 +22,11 @@ export async function generateRoute(req, res) {
             
             // Vérification de l'adresse IP
             if (decoded.ip !== clientIP) {
+                console.log('IP mismatch:', {
+                    expected: decoded.ip,
+                    received: clientIP,
+                    headers: req.headers
+                });
                 return res.status(401).json({ 
                     error: 'Adresse IP non autorisée',
                     expected: decoded.ip,

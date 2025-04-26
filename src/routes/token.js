@@ -1,10 +1,13 @@
 import jwt from 'jsonwebtoken';
-import { networkInterfaces } from 'os';
+
 
 export function generateTokenRoute(req, res) {
     try {
         // Récupération de l'IP du client
-        const clientIP = req.ip || req.connection.remoteAddress;
+        const clientIP = req.headers['x-forwarded-for'] || 
+                        req.headers['x-real-ip'] || 
+                        req.ip || 
+                        req.connection.remoteAddress;
 
         // Génération du token
         const token = jwt.sign(
