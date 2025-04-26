@@ -78,4 +78,26 @@ src/
   └── services/         # Services métier
       ├── gemini.js     # Service d'intégration Gemini
       └── queue.js      # Service de file d'attente
-``` 
+```
+
+## Déploiement sur Render
+
+1. Créez un compte sur [Render](https://render.com)
+2. Connectez votre compte GitHub
+3. Cliquez sur "New +" et sélectionnez "Web Service"
+4. Sélectionnez votre dépôt GitHub
+5. Configurez le service avec les paramètres suivants :
+   - **Name** : gemini-api
+   - **Environment** : Node
+   - **Build Command** : `npm install`
+   - **Start Command** : `npm start`
+   - **Plan** : Free
+
+### Variables d'environnement
+
+Assurez-vous de configurer les variables d'environnement suivantes dans les paramètres du service Render :
+
+- `GEMINI_API_KEY` : Votre clé API Gemini
+- `JWT_SECRET` : Votre secret JWT
+- `NODE_ENV` : production
+- `PORT` : 3000 (ou le port de votre choix) 

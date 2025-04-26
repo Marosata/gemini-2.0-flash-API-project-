@@ -6,7 +6,10 @@ export async function generateRoute(req, res) {
     try {
         const { prompt } = req.body;
         const token = req.headers.authorization?.split(' ')[1];
-        const clientIP = req.headers['x-forwarded-for'] || 
+        
+        // Récupération de l'IP d'origine en tenant compte des proxies
+        const forwardedFor = req.headers['x-forwarded-for'];
+        const clientIP = forwardedFor ? forwardedFor.split(',')[0] : 
                         req.headers['x-real-ip'] || 
                         req.ip || 
                         req.connection.remoteAddress;
@@ -20,8 +23,9 @@ export async function generateRoute(req, res) {
         try {
             decoded = jwt.verify(token, process.env.JWT_SECRET);
             
-            // Vérification de l'adresse IP
-            if (decoded.ip !== clientIP) {
+            // Vérification de l'adresse IP avec une tolérance pour les proxies
+            const expectedIPs = decoded.ip.split(',');
+            if (!expectedIPs.includes(clientIP)) {
                 console.log('IP mismatch:', {
                     expected: decoded.ip,
                     received: clientIP,
