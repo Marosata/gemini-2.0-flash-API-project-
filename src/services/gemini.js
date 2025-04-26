@@ -6,11 +6,7 @@ dotenv.config();
 // Initialisation du client Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-/**
- * Génère une réponse à partir d'un prompt en utilisant Gemini
- * @param {string} prompt - Le prompt à envoyer à Gemini
- * @returns {Promise<{text: string, id: string}>} - La réponse et l'ID de la génération
- */
+
 export async function generateResponse(prompt) {
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });

@@ -1,12 +1,9 @@
+import { generateResponse } from './gemini.js';
+
 // File d'attente en mémoire
 const queue = new Map();
 
-/**
- * Ajoute une tâche à la file d'attente
- * @param {string} prompt - Le prompt à traiter
- * @returns {string} - L'ID de la tâche
- */
-export function enqueue(prompt) {
+export async function enqueue(prompt) {
     const jobId = Date.now().toString();
     queue.set(jobId, {
         status: 'pending',
@@ -14,6 +11,15 @@ export function enqueue(prompt) {
         result: null,
         createdAt: Date.now()
     });
+
+    // Traitement immédiat de la tâche
+    try {
+        const result = await generateResponse(prompt);
+        updateJobStatus(jobId, 'completed', result);
+    } catch (error) {
+        updateJobStatus(jobId, 'failed', { error: error.message });
+    }
+
     return jobId;
 }
 

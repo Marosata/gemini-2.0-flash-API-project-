@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { generateRoute } from './routes/generate.js';
 import { enqueueRoute } from './routes/enqueue.js';
 import { statusRoute } from './routes/status.js';
+import { generateTokenRoute } from './routes/token.js';
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use(limiter);
 
 // Routes
+app.get('/api/token', generateTokenRoute);
 app.post('/api/generate', generateRoute);
 app.post('/api/enqueue', enqueueRoute);
 app.get('/api/status', statusRoute);

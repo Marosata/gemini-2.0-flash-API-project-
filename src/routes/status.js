@@ -1,10 +1,6 @@
 import { getJobStatus } from '../services/queue.js';
 
-/**
- * Route pour vérifier le statut d'une tâche
- * @param {Object} req - La requête HTTP
- * @param {Object} res - La réponse HTTP
- */
+
 export function statusRoute(req, res) {
     try {
         const { jobId } = req.query;

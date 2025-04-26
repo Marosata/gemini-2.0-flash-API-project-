@@ -1,22 +1,30 @@
 import { generateResponse } from '../services/gemini.js';
 import jwt from 'jsonwebtoken';
 
-/**
- * Route pour la génération directe de réponse
- * @param {Object} req - La requête HTTP
- * @param {Object} res - La réponse HTTP
- */
+
 export async function generateRoute(req, res) {
     try {
-        const { prompt, token } = req.body;
+        const { prompt } = req.body;
+        const token = req.headers.authorization?.split(' ')[1];
+        const clientIP = req.ip || req.connection.remoteAddress;
 
         // Vérification du token JWT
         if (!token) {
-            return res.status(401).json({ error: 'Token manquant' });
+            return res.status(401).json({ error: 'Token manquant dans les headers' });
         }
 
+        let decoded;
         try {
-            jwt.verify(token, process.env.JWT_SECRET);
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+            
+            // Vérification de l'adresse IP
+            if (decoded.ip !== clientIP) {
+                return res.status(401).json({ 
+                    error: 'Adresse IP non autorisée',
+                    expected: decoded.ip,
+                    received: clientIP
+                });
+            }
         } catch (error) {
             return res.status(401).json({ error: 'Token invalide' });
         }
